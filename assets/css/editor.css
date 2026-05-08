@@ -1,0 +1,197 @@
+/* ---- Image Controls ---- */
+.img-wrapper {
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 8px 0;
+}
+
+.img-wrapper img {
+    display: block;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+.img-btn-hide {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast), opacity var(--transition-fast);
+    opacity: 0;
+    z-index: 2;
+}
+
+.img-wrapper:hover .img-btn-hide {
+    opacity: 1;
+}
+
+.img-btn-hide:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.img-btn-hide .material-icons-round {
+    font-size: 18px;
+}
+
+.img-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 50%, rgba(79, 70, 229, 0.7) 50%);
+    border-radius: 0 0 8px 0;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    z-index: 2;
+}
+
+.img-wrapper:hover .img-resize-handle {
+    opacity: 1;
+}
+
+.img-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg-glass);
+    border: 1px dashed var(--border-glass-hover);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    transition: all var(--transition-normal);
+    margin: 8px 0;
+}
+
+.img-placeholder:hover {
+    background: var(--bg-glass-strong);
+    color: var(--text-secondary);
+}
+
+.img-placeholder .material-icons-round {
+    font-size: 18px;
+}
+
+/* ---- Rich Text Editor ---- */
+.rich-editor {
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color var(--transition-normal);
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.rich-editor:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 2px;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.editor-toolbar button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0;
+}
+
+.editor-toolbar button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
+.editor-toolbar button .material-icons-round {
+    font-size: 19px;
+}
+
+.editor-toolbar .sep {
+    width: 1px;
+    height: 24px;
+    margin: 4px 4px;
+    background: var(--border-glass);
+}
+
+.editor-content {
+    min-height: 80px;
+    padding: 12px 14px;
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    outline: none;
+    overflow-y: auto;
+    max-height: 500px;
+    resize: none;
+}
+
+.editor-content:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.editor-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+.editor-content ul,
+.editor-content ol {
+    padding-left: 20px;
+    margin: 4px 0;
+}
+
+.editor-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+    z-index: 2;
+}
+
+.editor-resize-handle:hover {
+    color: var(--accent-primary);
+}
+
+.editor-resize-handle .material-icons-round {
+    font-size: 16px;
+}

@@ -1,0 +1,14 @@
+/* ============================================================
+ * 入口檔：用 @import 串接其餘樣式檔
+ * ============================================================
+ * 為了避免單一檔案過長、便於迭代，CSS 切成多個獨立檔案。
+ * 同一元件的 base + responsive + keyframes 放在同一檔以利維護。
+ */
+
+@import url('./variables.css');
+@import url('./layout.css');
+@import url('./components.css');
+@import url('./search.css');
+@import url('./dashboard.css');
+@import url('./feedback.css');
+@import url('./editor.css');

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent 回饋追蹤系統</title>
+    <meta name="description" content="公司內部 Agent 產品使用回饋追蹤平台">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/main.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button class="navbar-hamburger" id="hamburgerBtn" onclick="toggleMobileSidebar()">
+                <span class="material-icons-round">menu</span>
+            </button>
+            <div class="navbar-brand" onclick="showDashboard()" style="cursor:pointer" title="回到首頁">
+                <span class="material-icons-round">track_changes</span>
+                <span class="brand-text">Agent 回饋追蹤系統</span>
+            </div>
+        </div>
+        <div class="navbar-search" id="navbarSearch">
+            <span class="material-icons-round search-icon">search</span>
+            <div class="search-tags" id="searchTags"></div>
+            <input type="text" id="globalSearchInput" placeholder="輸入關鍵字後按 Enter 搜尋...">
+            <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display:none"
+                title="清除搜尋">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="navbar-user">
+            <div class="user-info" id="userInfoBtn" onclick="showUserSetup()">
+                <span class="material-icons-round">person</span>
+                <span id="userDisplayLabel">設定使用者</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div id="agentListContainer">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+        <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+            <span class="material-icons-round">chevron_left</span>
+        </div>
+        <div class="resizer" id="resizer"></div>
+
+        <main class="main-content" id="mainContent">
+            <div class="welcome-screen" id="welcomeScreen">
+                <!-- 儀表板 -->
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <span class="material-icons-round">dashboard</span>
+                        <h2>系統總覽</h2>
+                    </div>
+                    <div class="dashboard-stats" id="dashboardStats">
+                        <div class="dashboard-loading"><div class="spinner"></div><span>載入統計中...</span></div>
+                    </div>
+                </div>
+                <!-- 公告欄 -->
+                <div class="announcement-container">
+                    <div class="announcement-header">
+                        <span class="material-icons-round">campaign</span>
+                        <h2>公告欄</h2>
+                        <button class="btn btn-sm btn-outline" id="btnEditAnnouncement" style="display:none;" onclick="toggleAnnouncementEdit()">
+                            <span class="material-icons-round">edit</span> 編輯
+                        </button>
+                    </div>
+                    <div class="announcement-content" id="announcementContent">
+                        <p class="text-muted">載入中...</p>
+                    </div>
+                    <div class="announcement-docs" id="announcementDocsDisplay"></div>
+                    <div class="announcement-edit" id="announcementEdit" style="display:none;">
+                        <div id="announcementEditorWrap"></div>
+                        <div class="announcement-docs-edit">
+                            <div class="doc-edit-label">📎 相關文件</div>
+                            <div id="announcementDocsList"></div>
+                            <button type="button" class="btn btn-sm btn-outline btn-add-doc" onclick="addAnnouncementDoc()">
+                                <span class="material-icons-round">add_link</span> 新增文件連結
+                            </button>
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="btn btn-secondary" onclick="cancelAnnouncementEdit()">取消</button>
+                            <button class="btn btn-primary" onclick="saveAnnouncementContent()">
+                                <span class="material-icons-round">save</span> 儲存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="agentSection" style="display:none;">
+                <div class="agent-info-card" id="agentInfoCard"></div>
+                <div class="feedback-section-header">
+                    <h2>
+                        <span class="material-icons-round">rate_review</span>
+                        回饋追蹤 <span class="feedback-count" id="feedbackCount"></span>
+                    </h2>
+                    <button class="btn btn-primary" id="btnNewFeedback" onclick="toggleNewFeedbackForm()">
+                        <span class="material-icons-round">add</span>
+                        新增回饋
+                    </button>
+                </div>
+                <div id="newFeedbackFormContainer"></div>
+                <div id="feedbackList"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 使用者設定 -->
+    <div class="user-setup-overlay" id="userSetupOverlay" style="display:none;" onclick="closeSetupOverlay(event)">
+        <div class="user-setup-modal" onclick="event.stopPropagation()">
+            <div class="setup-icon material-icons-round">account_circle</div>
+            <h2>歡迎！請先設定身份</h2>
+            <p>您的資訊將用於識別回饋的發表者與回覆者</p>
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" id="setupNameInput" placeholder="請輸入您的姓名">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" id="setupEmailInput" placeholder="請輸入您的 Email">
+            </div>
+            <div class="form-group">
+                <label>技術部密碼</label>
+                <input type="password" id="setupPasswordInput" placeholder="技術部人員請輸入密碼，非技術部請留空">
+                <div class="form-hint">非技術部人員可直接留空</div>
+            </div>
+            <div class="modal-actions" style="display:flex;justify-content:center;margin-top:20px;">
+                <button class="btn btn-primary" onclick="saveUserInfo()" style="width:100%;">
+                    <span class="material-icons-round">check</span>
+                    確認儲存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="globalImageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
+    <div class="toast-container" id="toastContainer"></div>
+    <div id="confirmContainer"></div>
+
+    <script type="module" src="./assets/js/app.js"></script>
+
+</body>
+
+</html>
