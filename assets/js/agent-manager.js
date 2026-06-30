@@ -157,10 +157,49 @@ function renderAgents() {
 // ---- 分類：新增 / 重新命名 / 刪除 ----
 
 export function showAddCategoryInput() {
-  const name = (prompt('請輸入新分類名稱：') || '').trim();
-  if (!name) return;
-  if (managerCategories.indexOf(name) !== -1) { showToast('分類名稱已存在', 'error'); return; }
-  submitAddCategory(name);
+  const list = document.getElementById('mgmtCatList');
+  if (!list) return;
+
+  // 已在輸入中 → 聚焦即可，不重複插入
+  const existing = list.querySelector('.cat-add-row .cat-rename-input');
+  if (existing) { existing.focus(); return; }
+
+  // 清掉空狀態提示
+  if (list.querySelector('.mgmt-empty')) list.innerHTML = '';
+
+  const row = document.createElement('div');
+  row.className = 'cat-item cat-add-row active';
+  row.innerHTML =
+    '<div class="drag-handle"><span class="material-icons-round">drag_indicator</span></div>' +
+    '<input type="text" class="cat-rename-input" placeholder="輸入分類名稱">' +
+    '<button class="cat-action-btn ok" data-act="ok" title="確認"><span class="material-icons-round">check</span></button>' +
+    '<button class="cat-action-btn" data-act="cancel" title="取消"><span class="material-icons-round">close</span></button>';
+  list.insertBefore(row, list.firstChild);
+
+  const input = row.querySelector('input');
+  input.focus();
+
+  let done = false;
+  const finish = (commit) => {
+    if (done) return;
+    done = true;
+    const name = input.value.trim();
+    if (commit && name) {
+      if (managerCategories.indexOf(name) !== -1) { showToast('分類名稱已存在', 'error'); renderCategories(); return; }
+      submitAddCategory(name);
+    } else {
+      renderCategories();
+    }
+  };
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+  });
+  input.addEventListener('blur', () => finish(true));
+  // 用 mousedown + preventDefault，避免按鈕搶走 input 的 blur 順序
+  row.querySelector('[data-act="ok"]').addEventListener('mousedown', (e) => { e.preventDefault(); finish(true); });
+  row.querySelector('[data-act="cancel"]').addEventListener('mousedown', (e) => { e.preventDefault(); finish(false); });
 }
 
 async function submitAddCategory(name) {
