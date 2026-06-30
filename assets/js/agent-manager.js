@@ -71,8 +71,8 @@ function renderCategories() {
     const count = (managerAgents[cat] || []).length;
     const isActive = cat === selectedCategory;
     const isEmpty = count === 0;
-    html += `<div class="cat-item${isActive ? ' active' : ''}${isEmpty ? ' empty' : ''}" draggable="true" data-cat="${escapeAttr(cat)}">`;
-    html += '<div class="drag-handle"><span class="material-icons-round">drag_indicator</span></div>';
+    html += `<div class="cat-item${isActive ? ' active' : ''}${isEmpty ? ' empty' : ''}" data-cat="${escapeAttr(cat)}">`;
+    html += '<div class="drag-handle" draggable="true" title="拖曳調整順序"><span class="material-icons-round">drag_indicator</span></div>';
     html += `<span class="cat-name">${escapeHtml(cat)}</span>`;
     html += `<span class="cat-count">${count}</span>`;
     html += '<div class="cat-actions">';
@@ -125,8 +125,8 @@ function renderAgents() {
   } else {
     let html = '';
     agents.forEach((a) => {
-      html += `<div class="agent-row" draggable="true" data-agent-id="${escapeAttr(a.agentId)}">`;
-      html += '<div class="drag-handle"><span class="material-icons-round">drag_indicator</span></div>';
+      html += `<div class="agent-row" data-agent-id="${escapeAttr(a.agentId)}">`;
+      html += '<div class="drag-handle" draggable="true" title="拖曳調整順序／跨分類移動"><span class="material-icons-round">drag_indicator</span></div>';
       html += '<div class="agent-icon"><span class="material-icons-round">smart_toy</span></div>';
       html += '<div class="agent-row-info">';
       html += `<div class="agent-row-name">${escapeHtml(a.name)}</div>`;
@@ -551,14 +551,16 @@ function getInsertBefore(items, clientY) {
 // ---- 分類拖曳 ----
 
 function attachCategoryDrag(item) {
-  item.addEventListener('dragstart', (e) => {
+  const handle = item.querySelector('.drag-handle');
+  if (!handle) return;
+  handle.addEventListener('dragstart', (e) => {
     if (agentDragSrc) return;
     catDragSrc = item.dataset.cat;
     item.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', catDragSrc);
   });
-  item.addEventListener('dragend', () => {
+  handle.addEventListener('dragend', () => {
     catDragSrc = null;
     clearDropMarkers();
     document.querySelectorAll('#mgmtCatList .cat-item').forEach((el) => el.classList.remove('dragging'));
@@ -627,13 +629,15 @@ async function persistCategoryOrder() {
 // ---- Agent 拖曳 ----
 
 function attachAgentDrag(row) {
-  row.addEventListener('dragstart', (e) => {
+  const handle = row.querySelector('.drag-handle');
+  if (!handle) return;
+  handle.addEventListener('dragstart', (e) => {
     agentDragSrc = row.dataset.agentId;
     row.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', agentDragSrc);
   });
-  row.addEventListener('dragend', () => {
+  handle.addEventListener('dragend', () => {
     agentDragSrc = null;
     clearDropMarkers();
     document.querySelectorAll('#mgmtAgentList .agent-row').forEach((el) => el.classList.remove('dragging'));
