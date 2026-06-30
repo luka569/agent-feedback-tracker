@@ -11,7 +11,7 @@ let dragSrcEl = null;
 let dragSourceZone = null;
 
 export function initDragSort() {
-  document.querySelectorAll('.drag-handle').forEach((handle) => {
+  document.querySelectorAll('.feedback-accordion .drag-handle').forEach((handle) => {
     const accordion = handle.closest('.feedback-accordion');
     handle.addEventListener('dragstart', (e) => {
       dragSrcEl = accordion;

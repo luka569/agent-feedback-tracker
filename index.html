@@ -44,6 +44,10 @@
 
     <div class="app-layout">
         <aside class="sidebar" id="sidebar">
+            <div class="sidebar-mgmt-btn" id="btnManageAgents" style="display:none;" onclick="openAgentManager()">
+                <span class="material-icons-round">manage_accounts</span>
+                管理 Agent
+            </div>
             <div id="agentListContainer">
                 <div class="loading-spinner">
                     <div class="spinner"></div>
@@ -145,6 +149,43 @@
             </div>
         </div>
     </div>
+
+    <!-- Agent 管理面板（技術部限定） -->
+    <div class="mgmt-overlay" id="agentMgmtOverlay" style="display:none;">
+        <div class="mgmt-modal">
+            <div class="mgmt-modal-header">
+                <span class="material-icons-round header-icon">manage_accounts</span>
+                <h2>Agent 管理</h2>
+                <span class="header-tag">技術部專用</span>
+                <button class="mgmt-close-btn" onclick="closeAgentManager()">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="mgmt-body">
+                <div class="mgmt-cat-panel">
+                    <div class="mgmt-panel-header">
+                        <span class="material-icons-round header-icon">category</span>
+                        分類
+                        <button class="panel-add-btn" onclick="showAddCategoryInput()" title="新增分類">
+                            <span class="material-icons-round">add</span>
+                        </button>
+                    </div>
+                    <div class="mgmt-cat-list" id="mgmtCatList"></div>
+                </div>
+                <div class="mgmt-agent-panel">
+                    <div class="mgmt-panel-header" id="mgmtAgentPanelTitle">
+                        <span class="material-icons-round header-icon">smart_toy</span>Agent
+                    </div>
+                    <div class="mgmt-agent-list" id="mgmtAgentList"></div>
+                    <button class="mgmt-add-agent-btn" id="mgmtAddAgentBtn" style="display:none;" onclick="openAgentForm('add')">
+                        <span class="material-icons-round">add</span>新增 Agent
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="agentFormContainer"></div>
+    <div id="agentDeleteContainer"></div>
 
     <input type="file" id="globalImageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(this)">
     <div class="toast-container" id="toastContainer"></div>

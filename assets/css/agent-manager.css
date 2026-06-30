@@ -1,0 +1,536 @@
+/* ============================================================
+ * 🗂️ Agent 管理面板（技術部限定）
+ * ============================================================
+ * 對應 Wireframe-Agent管理功能.html。overlay 改用 fixed 覆蓋整個視窗。
+ */
+
+/* ---- 側邊欄「管理 Agent」入口 ---- */
+.sidebar-mgmt-btn {
+  margin: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(37, 99, 235, 0.06));
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  transition: all var(--transition-fast);
+}
+.sidebar-mgmt-btn:hover {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(37, 99, 235, 0.1));
+}
+.sidebar-mgmt-btn .material-icons-round { font-size: 18px; }
+
+/* ---- 管理面板 overlay / modal ---- */
+.mgmt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.mgmt-modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 920px;
+  height: 100%;
+  max-height: 680px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mgmt-modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mgmt-modal-header h2 { font-size: 17px; font-weight: 700; flex: 1; }
+.mgmt-modal-header .header-icon { color: var(--accent-primary); font-size: 22px; }
+.mgmt-modal-header .header-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-card-hover);
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+.mgmt-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-card-hover);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+.mgmt-close-btn:hover { background: #e2e8f0; }
+.mgmt-close-btn .material-icons-round { font-size: 18px; }
+
+.mgmt-body { flex: 1; display: flex; overflow: hidden; }
+
+/* ---- 左欄：分類 ---- */
+.mgmt-cat-panel {
+  width: 260px;
+  min-width: 260px;
+  border-right: 1px solid var(--border-glass);
+  display: flex;
+  flex-direction: column;
+}
+.mgmt-panel-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-glass);
+}
+.mgmt-panel-header .header-icon { font-size: 15px; margin-right: 6px; }
+.mgmt-panel-header .panel-add-btn {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent-primary);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mgmt-panel-header .panel-add-btn .material-icons-round { font-size: 16px; }
+.mgmt-panel-header .panel-add-btn:hover { background: var(--accent-secondary); }
+
+.mgmt-cat-list { flex: 1; overflow-y: auto; padding: 8px; }
+
+.cat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin-bottom: 2px;
+  border-left: 3px solid transparent;
+  transition: all var(--transition-fast);
+}
+.cat-item:hover, .cat-item.active { background: rgba(79, 70, 229, 0.06); }
+.cat-item.active { border-left: 3px solid var(--accent-primary); }
+.cat-item.empty .cat-name { font-style: italic; }
+.cat-item .drag-handle { color: #cbd5e1; cursor: grab; display: flex; align-items: center; }
+.cat-item .drag-handle .material-icons-round { font-size: 16px; }
+.cat-item .cat-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cat-item.active .cat-name { color: var(--accent-primary); }
+.cat-item .cat-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-card-hover);
+  padding: 1px 7px;
+  border-radius: 10px;
+  margin-right: 4px;
+}
+.cat-item .cat-actions { display: none; gap: 2px; }
+.cat-item:hover .cat-actions { display: flex; }
+.cat-action-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.1s;
+}
+.cat-action-btn:hover { background: var(--bg-card-hover); }
+.cat-action-btn.del:hover { background: #fef2f2; color: var(--danger); }
+.cat-action-btn.ok { color: var(--success); }
+.cat-action-btn .material-icons-round { font-size: 14px; }
+
+.cat-rename-input {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--accent-primary);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+}
+
+/* 拖曳插入線 / 拖曳中 / 跨分類目標 */
+.drop-line {
+  height: 3px;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  margin: 2px 8px;
+  box-shadow: 0 0 6px rgba(79, 70, 229, 0.4);
+}
+.cat-item.dragging, .agent-row.dragging { opacity: 0.4; }
+.cat-item.drop-target {
+  background: rgba(79, 70, 229, 0.1);
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* ---- 右欄：Agent 清單 ---- */
+.mgmt-agent-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.mgmt-agent-list { flex: 1; overflow-y: auto; padding: 8px 12px; }
+
+.agent-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+  background: var(--bg-card-hover);
+  transition: all var(--transition-fast);
+}
+.agent-row:hover {
+  border-color: var(--border-glass-hover);
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.agent-row .drag-handle { color: #cbd5e1; cursor: grab; display: flex; align-items: center; }
+.agent-row .drag-handle .material-icons-round { font-size: 18px; }
+.agent-row .agent-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(37, 99, 235, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+.agent-row .agent-icon .material-icons-round { font-size: 17px; }
+.agent-row-info { flex: 1; min-width: 0; }
+.agent-row-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.agent-row-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agent-row-cat-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--accent-primary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.agent-row-actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+.agent-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.1s;
+}
+.agent-action-btn:hover { background: var(--bg-card-hover); }
+.agent-action-btn.del:hover { background: #fef2f2; color: var(--danger); }
+.agent-action-btn .material-icons-round { font-size: 16px; }
+
+.mgmt-add-agent-btn {
+  margin: 12px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed var(--border-glass-hover);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+.mgmt-add-agent-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: rgba(79, 70, 229, 0.03);
+}
+.mgmt-add-agent-btn .material-icons-round { font-size: 18px; }
+
+.mgmt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+  gap: 12px;
+  text-align: center;
+}
+.mgmt-empty .material-icons-round { font-size: 40px; color: #cbd5e1; }
+.mgmt-empty p { font-size: 13px; }
+
+/* ---- 表單 Modal（新增 / 編輯 Agent）---- */
+.form-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.form-modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.form-modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-modal-header h3 { font-size: 16px; font-weight: 700; flex: 1; }
+.form-modal-header .header-icon { color: var(--accent-primary); }
+.form-modal-body { padding: 20px 24px; max-height: 60vh; overflow-y: auto; }
+.form-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-glass);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.mgmt-form-group { margin-bottom: 16px; }
+.mgmt-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.mgmt-form-group label .req { color: var(--danger); }
+.mgmt-form-control {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast);
+  background: #fff;
+}
+.mgmt-form-control:focus { border-color: var(--accent-primary); }
+select.mgmt-form-control { cursor: pointer; }
+textarea.mgmt-form-control { resize: vertical; min-height: 80px; }
+.mgmt-form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.mgmt-field-error { font-size: 11px; color: var(--danger); margin-top: 4px; display: none; }
+.mgmt-field-error.visible { display: block; }
+
+.doc-list { display: flex; flex-direction: column; gap: 6px; }
+.doc-row { display: flex; gap: 8px; align-items: center; }
+.doc-row .mgmt-form-control { font-size: 12px; padding: 7px 10px; }
+.doc-row-label { width: 100px; min-width: 100px; }
+.doc-row-url { flex: 1; min-width: 0; }
+.doc-row-del {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+  flex-shrink: 0;
+}
+.doc-row-del:hover { background: #fef2f2; color: var(--danger); }
+.doc-row-del .material-icons-round { font-size: 15px; }
+.btn-add-doc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed #cbd5e1;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  margin-top: 4px;
+}
+.btn-add-doc-row:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+.btn-add-doc-row .material-icons-round { font-size: 15px; }
+
+/* ---- 刪除確認 Modal ---- */
+.del-modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.del-modal-header {
+  padding: 20px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-glass);
+}
+.del-modal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fef2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--danger);
+  flex-shrink: 0;
+}
+.del-modal-icon .material-icons-round { font-size: 22px; }
+.del-modal-header h3 { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+.del-modal-header p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.del-modal-body { padding: 20px 24px; }
+.del-agent-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.del-agent-name .material-icons-round { font-size: 16px; color: var(--accent-primary); }
+.del-warning {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #dc2626;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.del-warning .material-icons-round { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+.del-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-glass);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.pw-input-wrap { position: relative; }
+.pw-input-wrap .mgmt-form-control { padding-right: 40px; }
+.pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+.pw-toggle .material-icons-round { font-size: 18px; }
+.pw-error { font-size: 12px; color: var(--danger); margin-top: 6px; display: none; }
+.pw-error.visible { display: block; }
+
+/* ---- Modal 共用按鈕 ---- */
+.mgmt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+.mgmt-btn .material-icons-round { font-size: 16px; }
+.mgmt-btn-primary { background: var(--accent-gradient); color: #fff; }
+.mgmt-btn-primary:hover { opacity: 0.9; }
+.mgmt-btn-secondary {
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-glass-hover);
+}
+.mgmt-btn-secondary:hover { background: #e2e8f0; }
+.mgmt-btn-danger { background: var(--danger); color: #fff; }
+.mgmt-btn-danger:hover { opacity: 0.9; }
+.mgmt-btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---- 手機板 ---- */
+@media (max-width: 768px) {
+  .mgmt-modal { max-height: none; height: 100%; border-radius: 0; }
+  .mgmt-body { flex-direction: column; }
+  .mgmt-cat-panel {
+    width: 100%;
+    min-width: 0;
+    max-height: 38%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-glass);
+  }
+}

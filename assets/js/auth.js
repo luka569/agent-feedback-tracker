@@ -92,4 +92,7 @@ export function updateUIByRole() {
   }
   const btnEditAnn = document.getElementById('btnEditAnnouncement');
   if (btnEditAnn) btnEditAnn.style.display = (state.currentUserRole === 'tech') ? '' : 'none';
+
+  const btnManageAgents = document.getElementById('btnManageAgents');
+  if (btnManageAgents) btnManageAgents.style.display = (state.currentUserRole === 'tech') ? '' : 'none';
 }

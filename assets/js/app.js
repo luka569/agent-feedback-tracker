@@ -25,6 +25,11 @@ import { showReplyForm, cancelReplyForm, submitReply } from './reply.js';
 import {
   execCmd, triggerImageUpload, handleImageUpload, handlePasteOrDropImage
 } from './editor.js';
+import {
+  openAgentManager, closeAgentManager, selectManagerCategory, showAddCategoryInput,
+  openAgentForm, closeAgentForm, addDocRow, confirmDeleteAgent, togglePwVisible,
+  initAgentManager
+} from './agent-manager.js';
 
 // ---- 把所有「會被 HTML 內聯 onclick 呼叫」的函式掛到 window ----
 //
@@ -50,7 +55,10 @@ Object.assign(window, {
   // Reply
   showReplyForm, cancelReplyForm, submitReply,
   // Editor
-  execCmd, triggerImageUpload, handleImageUpload, handlePasteOrDropImage
+  execCmd, triggerImageUpload, handleImageUpload, handlePasteOrDropImage,
+  // Agent 管理
+  openAgentManager, closeAgentManager, selectManagerCategory, showAddCategoryInput,
+  openAgentForm, closeAgentForm, addDocRow, confirmDeleteAgent, togglePwVisible
 });
 
 // ---- 啟動流程 ----
@@ -65,4 +73,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadDashboard();
   initResizer();
   initSearch();
+  initAgentManager();
 });
