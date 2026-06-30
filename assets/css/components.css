@@ -388,7 +388,7 @@
     position: fixed;
     top: 80px;
     right: 24px;
-    z-index: 400;
+    z-index: 3000; /* 必須高於 Agent 管理面板(2000) 與表單/刪除 Modal(2100)，否則 toast 會被蓋住 */
     display: flex;
     flex-direction: column;
     gap: 8px;
